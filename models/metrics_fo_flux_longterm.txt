@@ -1,0 +1,11 @@
+Chronological split -> Train R2=0.859 RMSE=0.088 | Test R2=-0.045 RMSE=0.326
+5-fold CV R2: [np.float64(0.6723078348171867), np.float64(0.8003667308725112), np.float64(0.7633827697199952), np.float64(0.8517580130691127), np.float64(0.7354597841926733)] mean=0.765
+Feature importances:
+FO_TMP_bar        0.390590
+feed_cond_mScm    0.200280
+draw_cond_mScm    0.171909
+time_min          0.097930
+draw_temp_C       0.089096
+feed_temp_C       0.031622
+RO_TMP_bar        0.018574
+Paper reported range: 3.9-4.1 L/h.m2 (stable). Data mean=3.94, std=0.26

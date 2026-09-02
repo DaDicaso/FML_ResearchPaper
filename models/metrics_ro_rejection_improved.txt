@@ -1,0 +1,8 @@
+Physical (solution-diffusion) model: A=1.0000, B=0.15052, R2 on 3 cal. points=0.9773
+At 50 bar: physical=99.40%, polynomial=99.21%, paper=99.2%
+At 70 bar (extrapolation): physical=99.67%, polynomial=95.66%
+At 20 bar (extrapolation): physical=0.00%, polynomial=94.12%
+
+Rationale: with n=3, both models fit the calibration points about equally well, so the
+correct axis of comparison is BEHAVIOR OUTSIDE the calibrated range, where the physical
+model stays monotonic/bounded and the polynomial does not.

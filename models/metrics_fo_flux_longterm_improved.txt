@@ -1,0 +1,13 @@
+                              model  holdout_R2  TimeSeriesSplit_CV_R2_mean  TimeSeriesSplit_CV_R2_std
+   RandomForest (baseline features)   -0.055498                   -3.575411                   5.966155
+RandomForest (+engineered features)    0.566435                   -0.053886                   0.804545
+       HistGradientBoosting (tuned)    0.385604                   -0.056820                   0.641701
+                    XGBoost (tuned)    0.322658                   -0.399194                   1.038567
+
+Best model: RandomForest (+engineered features)
+Best hyperparameters: n/a (default RF)
+
+Note: 'holdout_R2' is the same strict chronological 75/25 split used in the baseline
+notebook (train on first ~4.5h, test on final ~90 min spanning a cleaning event) —
+genuinely hard to extrapolate into. TimeSeriesSplit_CV_R2 is a fairer, less biased
+estimate of typical generalization within the interior of the run.

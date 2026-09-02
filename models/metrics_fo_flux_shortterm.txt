@@ -1,0 +1,3 @@
+LOOCV R2=0.425 RMSE=1.133
+Note: only 11 data points; recovery% and feed conductivity are interpolated from
+paper-figure recovery annotations matched against Sample analysis sheet, not directly logged per-timestamp.

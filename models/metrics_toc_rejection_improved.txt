@@ -1,0 +1,15 @@
+  stream             target  LOOCV_R2_linear_CF  LOOCV_R2_GPR
+Draw out           TOC_mg_L           -2.071290     -0.534020
+ Feed in           TOC_mg_L            0.978702      0.560011
+Feed out           TOC_mg_L            0.892798      0.478427
+Draw out           TDS_mg_L           -2.252193     -1.196348
+ Feed in           TDS_mg_L            0.981965      0.350188
+Feed out           TDS_mg_L            0.812813      0.859738
+Draw out conductivity_uS_cm           -2.259278     -1.218574
+ Feed in conductivity_uS_cm            0.949373      0.423348
+Feed out conductivity_uS_cm            0.759251      0.948704
+
+Rationale: GPR fits each stream's own natural shape instead of forcing every stream
+through the same CF-linear form. Expect the biggest improvement for 'Draw out' (which
+physically should NOT follow the feed-side concentration trend) and comparable performance
+for feed-in/feed-out (which genuinely are close to linear-in-CF).

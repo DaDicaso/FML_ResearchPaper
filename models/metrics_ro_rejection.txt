@@ -1,0 +1,5 @@
+Rejection LOOCV R2=-1.708
+Permeate flow LOOCV R2=0.997
+Note: only 3 calibration pressures (30/40/50 bar) available in source data;
+polynomial degree kept low (2) to avoid overfitting on n=3.
+At 50 bar (operating point), predicted rejection = 99.21% (paper reports 99.2% at 50 bar in the individual test).

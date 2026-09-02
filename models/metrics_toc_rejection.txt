@@ -1,0 +1,20 @@
+LOOCV R2 per stream/target (linear regression on concentration factor CF=1/(1-recovery/100)):
+  ('Draw out', 'TOC_mg_L'): R2=-2.071
+  ('Feed in', 'TOC_mg_L'): R2=0.979
+  ('Feed out', 'TOC_mg_L'): R2=0.893
+  ('Draw out', 'TDS_mg_L'): R2=-2.252
+  ('Feed in', 'TDS_mg_L'): R2=0.982
+  ('Feed out', 'TDS_mg_L'): R2=0.813
+  ('Draw out', 'conductivity_uS_cm'): R2=-2.259
+  ('Feed in', 'conductivity_uS_cm'): R2=0.949
+  ('Feed out', 'conductivity_uS_cm'): R2=0.759
+
+Derived TOC rejection (1 - draw_out/feed_in) vs paper Table 4 TOC rejection:
+ recovery_pct  TOC_feed_in  TOC_draw_out  TOC_rejection_pct
+           25   102.630883      1.812987          98.233488
+           50   149.406622      1.621065          98.914998
+           75   251.973524      2.657211          98.945440
+           80   321.947114      2.250653          99.300925
+           85   402.045036      1.670083          99.584603
+
+Paper Table 4 TOC rejection (%): 25%:99.3, 50%:99.7, 75%:99.1, 90%:99.9

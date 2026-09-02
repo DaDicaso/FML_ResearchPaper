@@ -1,0 +1,7 @@
+Baseline GradientBoosting: LOOCV R2=0.425 RMSE=1.133
+Improved GaussianProcess:  LOOCV R2=0.587 RMSE=0.960
+Fitted kernel: 0.824**2 * RBF(length_scale=0.715) + WhiteKernel(noise_level=0.225)
+
+Rationale: with n=11, GPR's smooth interpolation and native uncertainty
+quantification are a better match to the data regime than a tree ensemble,
+which can only output a step function between training points.
