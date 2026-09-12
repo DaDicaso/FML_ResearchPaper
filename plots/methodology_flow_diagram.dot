@@ -1,0 +1,94 @@
+digraph MethodologyFlow {
+  graph [
+    rankdir=TB,
+    bgcolor="white",
+    pad="0.25",
+    nodesep="0.45",
+    ranksep="0.55",
+    splines=ortho
+  ];
+
+  node [
+    shape=rect,
+    style="rounded,filled",
+    fontname="Helvetica",
+    fontsize=13,
+    margin="0.12,0.08",
+    penwidth=1.3,
+    color="#334155",
+    fillcolor="#f8fafc",
+    fontcolor="#0f172a"
+  ];
+
+  edge [
+    fontname="Helvetica",
+    fontsize=11,
+    color="#475569",
+    fontcolor="#334155",
+    arrowsize=0.8,
+    penwidth=1.2
+  ];
+
+  start [
+    label="Base FO-RO Experimental Study\n(real textile wastewater)",
+    fillcolor="#e0f2fe"
+  ];
+
+  data [
+    label="Data Extraction and Cleaning\nExcel workbooks -> CSV datasets\nFO flux, RO rejection, TOC/TDS/conductivity",
+    fillcolor="#ecfeff"
+  ];
+
+  problem [
+    label="Modeling Problem Definition\nMatch model choice to data structure:\ntime series, sparse samples, physical limits",
+    fillcolor="#eef2ff"
+  ];
+
+  m1a [
+    label="Model 1a: Long-Term FO Flux\nn = 709\nLag features + rolling features\nTimeSeriesSplit validation",
+    fillcolor="#f0fdf4"
+  ];
+
+  m1b [
+    label="Model 1b: Short-Term FO Flux\nn = 11\nGaussian Process Regression\nLOOCV + 95% credible interval",
+    fillcolor="#f0fdf4"
+  ];
+
+  m2 [
+    label="Model 2: RO Rejection vs TMP\nn = 3 pressures\nSolution-diffusion model\nPhysical extrapolation constraint",
+    fillcolor="#f0fdf4"
+  ];
+
+  m3 [
+    label="Model 3: Solute Tracking\nTOC / TDS / conductivity\nLinear CF baseline vs per-stream GPR",
+    fillcolor="#f0fdf4"
+  ];
+
+  eval [
+    label="Model Evaluation\nR², RMSE, LOOCV,\nchronological holdout,\nphysical plausibility",
+    fillcolor="#fff7ed"
+  ];
+
+  outputs [
+    label="Project Outputs\nImproved comparison plots,\nmodel metrics, regenerated figures,\nrewritten manuscript",
+    fillcolor="#fefce8"
+  ];
+
+  conclusion [
+    label="Final Methodological Finding\nReliable membrane-process ML requires\nvalidation + sample size + physics-aware constraints",
+    fillcolor="#ffe4e6"
+  ];
+
+  start -> data;
+  data -> problem;
+  problem -> m1a;
+  problem -> m1b;
+  problem -> m2;
+  problem -> m3;
+  m1a -> eval;
+  m1b -> eval;
+  m2 -> eval;
+  m3 -> eval;
+  eval -> outputs;
+  outputs -> conclusion;
+}
