@@ -29,6 +29,15 @@ digraph MethodologyFlow {
     penwidth=1.2
   ];
 
+  begin [
+    label="START",
+    shape=oval,
+    fillcolor="#dcfce7",
+    color="#15803d",
+    fontcolor="#14532d",
+    fontsize=15
+  ];
+
   start [
     label="Base FO-RO Experimental Study\n(real textile wastewater)",
     fillcolor="#e0f2fe"
@@ -79,6 +88,16 @@ digraph MethodologyFlow {
     fillcolor="#ffe4e6"
   ];
 
+  stop [
+    label="STOP",
+    shape=oval,
+    fillcolor="#fee2e2",
+    color="#b91c1c",
+    fontcolor="#7f1d1d",
+    fontsize=15
+  ];
+
+  begin -> start;
   start -> data;
   data -> problem;
   problem -> m1a;
@@ -91,4 +110,5 @@ digraph MethodologyFlow {
   m3 -> eval;
   eval -> outputs;
   outputs -> conclusion;
+  conclusion -> stop;
 }

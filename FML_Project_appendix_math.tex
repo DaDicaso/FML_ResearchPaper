@@ -1,0 +1,404 @@
+\appendix
+\section{Mathematical Expressions Used in the Modeling Workflow}
+
+This appendix summarizes the mathematical expressions used in the modified FO-RO modeling workflow. The equations are grouped by data preprocessing, model formulation, and model-evaluation metrics.
+
+\subsection{Water Recovery and Concentration Factor}
+Water recovery was used to describe the fraction of feed water removed during the FO concentration step:
+\begin{equation}
+\mathrm{Recovery}_t =
+\frac{M_{f,0}-M_{f,t}}{M_{f,0}} \times 100,
+\end{equation}
+where $M_{f,0}$ is the initial feed mass and $M_{f,t}$ is the feed mass at time $t$.
+
+For solute-tracking models, the concentration factor was defined as:
+\begin{equation}
+CF = \frac{1}{1-\mathrm{Recovery}/100}.
+\end{equation}
+
+\subsection{Forward-Osmosis Permeate Flux}
+The FO permeate flux was computed from the difference between feed-in and feed-out flow rates normalized by the FO membrane area:
+\begin{equation}
+J_w = \frac{Q_{\mathrm{feed,in}} - Q_{\mathrm{feed,out}}}{A_m},
+\end{equation}
+where $J_w$ is the water flux, $Q_{\mathrm{feed,in}}$ is the feed inlet flow rate, $Q_{\mathrm{feed,out}}$ is the feed outlet flow rate, and $A_m$ is the membrane active area. For the HFFO14 membrane, $A_m = 13.8$ m$^2$.
+
+\subsection{Temporal Feature Engineering for Long-Term FO Flux}
+Lagged flux values were used to represent time-series memory:
+\begin{equation}
+J_{w,t-k} = J_w(t-k),
+\end{equation}
+where $k \in \{1,3,5\}$ indicates the lag step.
+
+Rolling averages were used to summarize recent operating conditions:
+\begin{equation}
+\overline{x}_{t,w} = \frac{1}{w}\sum_{i=0}^{w-1} x_{t-i},
+\end{equation}
+where $x$ is an operating variable such as conductivity or temperature, and $w$ is the rolling-window length.
+
+The draw-to-feed conductivity ratio was computed as:
+\begin{equation}
+R_{\kappa} = \frac{\kappa_{\mathrm{draw}}}{\kappa_{\mathrm{feed}}},
+\end{equation}
+where $\kappa_{\mathrm{draw}}$ and $\kappa_{\mathrm{feed}}$ are the draw and feed conductivities, respectively.
+
+\subsection{Random Forest Regression}
+The Random Forest prediction is the average prediction of $B$ individual regression trees:
+\begin{equation}
+\hat{y}_{\mathrm{RF}}(\mathbf{x}) =
+\frac{1}{B}\sum_{b=1}^{B} T_b(\mathbf{x}),
+\end{equation}
+where $\mathbf{x}$ is the feature vector and $T_b(\mathbf{x})$ is the prediction from the $b$th tree.
+
+\subsection{Gaussian Process Regression}
+Gaussian Process Regression assumes that the target function follows a Gaussian process:
+\begin{equation}
+f(\mathbf{x}) \sim \mathcal{GP}\left(m(\mathbf{x}), k(\mathbf{x},\mathbf{x}')\right),
+\end{equation}
+where $m(\mathbf{x})$ is the mean function and $k(\mathbf{x},\mathbf{x}')$ is the covariance kernel.
+
+The radial basis function kernel used in the GPR model can be written as:
+\begin{equation}
+k_{\mathrm{RBF}}(\mathbf{x},\mathbf{x}') =
+\sigma_f^2 \exp\left(
+-\frac{\|\mathbf{x}-\mathbf{x}'\|^2}{2\ell^2}
+\right),
+\end{equation}
+where $\sigma_f^2$ is the signal variance and $\ell$ is the length-scale parameter.
+
+The full kernel included an additive white-noise term:
+\begin{equation}
+k(\mathbf{x},\mathbf{x}') =
+k_{\mathrm{RBF}}(\mathbf{x},\mathbf{x}') +
+\sigma_n^2\delta_{\mathbf{x},\mathbf{x}'},
+\end{equation}
+where $\sigma_n^2$ is the noise variance and $\delta_{\mathbf{x},\mathbf{x}'}$ is the Kronecker delta.
+
+For a test point $\mathbf{x}_*$, the GPR predictive distribution is:
+\begin{equation}
+p(y_* \mid \mathbf{x}_*, X, \mathbf{y}) =
+\mathcal{N}(\mu_*, \sigma_*^2),
+\end{equation}
+where $\mu_*$ is the predictive mean and $\sigma_*^2$ is the predictive variance.
+
+The 95\% credible interval was computed as:
+\begin{equation}
+\mu_* \pm 1.96\sigma_*.
+\end{equation}
+
+\subsection{Reverse-Osmosis Rejection}
+Conductivity rejection was computed as:
+\begin{equation}
+R = \left(1-\frac{C_p}{C_f}\right)\times 100,
+\end{equation}
+where $C_p$ is the permeate conductivity and $C_f$ is the feed conductivity.
+
+\subsection{Solution-Diffusion RO Rejection Model}
+The net driving pressure was expressed as:
+\begin{equation}
+\Delta P_{\mathrm{net}} = \Delta P - \Delta \pi,
+\end{equation}
+where $\Delta P$ is the applied pressure difference and $\Delta \pi$ is the osmotic-pressure difference.
+
+The pressure-driven water flux term was modeled as:
+\begin{equation}
+J_w = A\max(\Delta P-\Delta \pi,0),
+\end{equation}
+where $A$ is the water-permeability parameter.
+
+The physically constrained rejection model was:
+\begin{equation}
+R_{\mathrm{phys}} =
+1-\frac{B}{A\max(\Delta P-\Delta \pi,0)+B},
+\end{equation}
+where $B$ is the salt-passage parameter. In the fitted model, $A=1.0000$ and $B=0.15052$.
+
+\subsection{Polynomial Baseline for RO Rejection}
+The polynomial baseline used for comparison was:
+\begin{equation}
+R_{\mathrm{poly}}(\Delta P) =
+\beta_0+\beta_1\Delta P+\beta_2\Delta P^2,
+\end{equation}
+where $\beta_0$, $\beta_1$, and $\beta_2$ are fitted regression coefficients.
+
+\subsection{Linear Concentration-Factor Model}
+For TOC, TDS, and conductivity tracking, the baseline concentration-factor model was:
+\begin{equation}
+\hat{y} = \alpha_0+\alpha_1 CF,
+\end{equation}
+where $\hat{y}$ is the predicted solute metric and $CF$ is the concentration factor.
+
+\subsection{Leave-One-Out Cross-Validation}
+Leave-one-out cross-validation evaluates a model by holding out one observation at a time:
+\begin{equation}
+\hat{y}_{(-i)} = f_{-i}(\mathbf{x}_i),
+\end{equation}
+where $f_{-i}$ is the model trained on all observations except the $i$th observation.
+
+\subsection{Evaluation Metrics}
+The coefficient of determination was computed as:
+\begin{equation}
+R^2 =
+1-\frac{\sum_{i=1}^{n}(y_i-\hat{y}_i)^2}
+{\sum_{i=1}^{n}(y_i-\overline{y})^2},
+\end{equation}
+where $y_i$ is the measured value, $\hat{y}_i$ is the predicted value, and $\overline{y}$ is the mean measured value.
+
+The root mean squared error was computed as:
+\begin{equation}
+\mathrm{RMSE} =
+\sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i-\hat{y}_i)^2}.
+\end{equation}
+
+The mean squared error was:
+\begin{equation}
+\mathrm{MSE} =
+\frac{1}{n}\sum_{i=1}^{n}(y_i-\hat{y}_i)^2.
+\end{equation}
+
+\section{Worked Substitutions for Reported Results}
+
+This section shows how the main numerical results reported in the paper follow from the equations above. Full row-by-row calculations were performed in the project notebooks/scripts; the substitutions below show representative values and the final metric calculations.
+
+\subsection{Example FO Flux Calculation}
+For the HFFO14 FO membrane, the active area is:
+\begin{equation}
+A_m = 13.8 \ \mathrm{m^2}.
+\end{equation}
+
+If the measured feed-in and feed-out flow-rate difference is 55.2 L/h, the FO permeate flux is:
+\begin{equation}
+J_w =
+\frac{Q_{\mathrm{feed,in}}-Q_{\mathrm{feed,out}}}{A_m}
+=
+\frac{55.2}{13.8}
+=
+4.0 \ \mathrm{L\,h^{-1}\,m^{-2}}.
+\end{equation}
+
+This is consistent with the long-term experimental flux range reported in the base paper:
+\begin{equation}
+J_w \approx 3.9\text{--}4.1 \ \mathrm{L\,h^{-1}\,m^{-2}}.
+\end{equation}
+
+\subsection{Example Water Recovery and Concentration Factor}
+For 90\% water recovery, the concentration factor is:
+\begin{equation}
+CF =
+\frac{1}{1-90/100}
+=
+\frac{1}{0.10}
+=
+10.
+\end{equation}
+
+Thus, a solute that follows ideal feed-side concentration behavior would be expected to scale approximately tenfold at 90\% water recovery. This is why the linear concentration-factor model was suitable for some feed-side trends but not for the regenerated draw-out stream.
+
+\subsection{Long-Term FO Flux Model Improvement}
+The chronological holdout $R^2$ is calculated as:
+\begin{equation}
+R^2 =
+1-\frac{\sum_{i=1}^{n}(y_i-\hat{y}_i)^2}
+{\sum_{i=1}^{n}(y_i-\overline{y})^2}.
+\end{equation}
+
+For the baseline Random Forest with original features, the project calculation gave:
+\begin{equation}
+R^2_{\mathrm{baseline}} = -0.055.
+\end{equation}
+
+This corresponds to:
+\begin{equation}
+\frac{\sum_{i=1}^{n}(y_i-\hat{y}_i)^2}
+{\sum_{i=1}^{n}(y_i-\overline{y})^2}
+=
+1-(-0.055)
+=
+1.055.
+\end{equation}
+
+Since the error ratio is greater than 1, the baseline model performed worse than predicting the holdout mean. After adding lag, rolling, and conductivity-ratio features, the result was:
+\begin{equation}
+R^2_{\mathrm{engineered}} = 0.566.
+\end{equation}
+
+The corresponding residual-to-total variance ratio was:
+\begin{equation}
+\frac{\sum_{i=1}^{n}(y_i-\hat{y}_i)^2}
+{\sum_{i=1}^{n}(y_i-\overline{y})^2}
+=
+1-0.566
+=
+0.434.
+\end{equation}
+
+Therefore, the engineered-feature model reduced the normalized unexplained variance from 1.055 to 0.434:
+\begin{equation}
+\Delta R^2 = 0.566 - (-0.055) = 0.621.
+\end{equation}
+
+\subsection{Short-Term FO Flux GPR Improvement}
+For the short-term FO flux dataset, leave-one-out cross-validation used $n=11$ observations. The baseline Gradient Boosting model gave:
+\begin{equation}
+R^2_{\mathrm{GB}} = 0.425, \qquad
+\mathrm{RMSE}_{\mathrm{GB}} = 1.133.
+\end{equation}
+
+The corresponding mean squared error is:
+\begin{equation}
+\mathrm{MSE}_{\mathrm{GB}} =
+(1.133)^2
+=
+1.284.
+\end{equation}
+
+The improved GPR model gave:
+\begin{equation}
+R^2_{\mathrm{GPR}} = 0.587, \qquad
+\mathrm{RMSE}_{\mathrm{GPR}} = 0.960.
+\end{equation}
+
+The corresponding mean squared error is:
+\begin{equation}
+\mathrm{MSE}_{\mathrm{GPR}} =
+(0.960)^2
+=
+0.922.
+\end{equation}
+
+Thus, the RMSE reduction was:
+\begin{equation}
+\Delta \mathrm{RMSE}
+=
+1.133 - 0.960
+=
+0.173.
+\end{equation}
+
+The $R^2$ improvement was:
+\begin{equation}
+\Delta R^2 =
+0.587 - 0.425
+=
+0.162.
+\end{equation}
+
+\subsection{Solution-Diffusion RO Rejection Substitutions}
+The fitted solution-diffusion parameters were:
+\begin{equation}
+A=1.0000, \qquad B=0.15052,
+\end{equation}
+and the osmotic-pressure difference for the NaCl feed was approximated as:
+\begin{equation}
+\Delta \pi = 24.9 \ \mathrm{bar}.
+\end{equation}
+
+At $\Delta P=50$ bar:
+\begin{equation}
+\Delta P_{\mathrm{net}}
+=
+50-24.9
+=
+25.1 \ \mathrm{bar}.
+\end{equation}
+
+The physical rejection fraction is:
+\begin{equation}
+R_{\mathrm{phys}}
+=
+1-\frac{0.15052}{1.0000(25.1)+0.15052}
+=
+1-\frac{0.15052}{25.25052}
+=
+0.9940.
+\end{equation}
+
+Expressed as a percentage:
+\begin{equation}
+R_{\mathrm{phys}} = 0.9940 \times 100 = 99.40\%.
+\end{equation}
+
+At $\Delta P=70$ bar:
+\begin{equation}
+\Delta P_{\mathrm{net}}
+=
+70-24.9
+=
+45.1 \ \mathrm{bar},
+\end{equation}
+so:
+\begin{equation}
+R_{\mathrm{phys}}
+=
+1-\frac{0.15052}{45.1+0.15052}
+=
+0.9967
+=
+99.67\%.
+\end{equation}
+
+At $\Delta P=20$ bar:
+\begin{equation}
+\Delta P_{\mathrm{net}}
+=
+20-24.9
+=
+-4.9 \ \mathrm{bar}.
+\end{equation}
+
+Because the model applies $\max(\Delta P-\Delta \pi,0)$:
+\begin{equation}
+\max(-4.9,0)=0.
+\end{equation}
+
+Thus, the pressure-driven water-flux term becomes:
+\begin{equation}
+J_w = A \times 0 = 0,
+\end{equation}
+which represents the physically constrained zero-flux condition below the osmotic-pressure limit. This is why the physical model avoids the polynomial baseline's unphysical 20 bar extrapolation.
+
+\subsection{Solute-Tracking Model Comparison}
+For the draw-out TOC stream, the linear concentration-factor model gave:
+\begin{equation}
+R^2_{\mathrm{linear, draw\ TOC}} = -2.071.
+\end{equation}
+
+The corresponding residual-to-total variance ratio was:
+\begin{equation}
+1-(-2.071)=3.071.
+\end{equation}
+
+This means that the linear concentration-factor assumption produced residual error more than three times the total variance of the measured draw-out TOC values.
+
+For the GPR model:
+\begin{equation}
+R^2_{\mathrm{GPR, draw\ TOC}} = -0.534,
+\end{equation}
+which corresponds to:
+\begin{equation}
+1-(-0.534)=1.534.
+\end{equation}
+
+The improvement in $R^2$ was therefore:
+\begin{equation}
+\Delta R^2 =
+-0.534 - (-2.071)
+=
+1.537.
+\end{equation}
+
+Similar improvements were obtained for draw-out TDS and conductivity:
+\begin{equation}
+\Delta R^2_{\mathrm{draw\ TDS}}
+=
+-1.196 - (-2.252)
+=
+1.056,
+\end{equation}
+\begin{equation}
+\Delta R^2_{\mathrm{draw\ cond.}}
+=
+-1.219 - (-2.259)
+=
+1.040.
+\end{equation}
